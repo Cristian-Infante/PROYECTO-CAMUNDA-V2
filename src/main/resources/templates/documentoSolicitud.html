@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Solicitud de Crédito</title>
+</head>
+<body>
+    <h1>Formulario de Solicitud de Crédito</h1>
+    <form action="/submitDocuments" method="post">
+        <label>Tipo de Empleado:</label><br>
+        <input type="checkbox" id="esEmpleado" name="esEmpleado" value="true">
+        <label for="esEmpleado">Empleado</label><br>
+        <input type="checkbox" id="esIndependiente" name="esIndependiente" value="true">
+        <label for="esIndependiente">Independiente</label><br>
+        <input type="checkbox" id="esPensionado" name="esPensionado" value="true">
+        <label for="esPensionado">Pensionado</label><br><br>
+
+        <label for="rut">Documento RUT:</label>
+        <input type="text" id="rut" name="rut" required autocomplete="false"><br><br>
+
+        <label for="puntaje">Puntaje Crediticio:</label>
+        <input type="number" id="puntaje" name="puntaje" required autocomplete="false" min="0" max="950" maxlength="3"><br><br>
+
+        <label for="certificadoLaboral"  style="display: none;">Certificado Laboral:</label>
+        <input type="text" id="certificadoLaboral" name="certificadoLaboral"  style="display: none;"><br><br>
+
+        <label for="declaracionImpuestos"  style="display: none;">Declaración de Impuestos:</label>
+        <input type="text" id="declaracionImpuestos" name="declaracionImpuestos"  style="display: none;"><br><br>
+
+        <label for="comprobantePagoPension"  style="display: none;">Comprobante de Pago de Pensión:</label>
+        <input type="text" id="comprobantePagoPension" name="comprobantePagoPension"  style="display: none;"><br><br>
+
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tipoEmpleadoInputs = {
+            'esEmpleado': ['certificadoLaboral'],
+            'esIndependiente': ['declaracionImpuestos'],
+            'esPensionado': ['comprobantePagoPension']
+        };
+
+        // Función para manejar los cambios en los checkboxes
+        function handleCheckboxChange(checkedId) {
+            Object.keys(tipoEmpleadoInputs).forEach(id => {
+                const inputsToShow = tipoEmpleadoInputs[id];
+                inputsToShow.forEach(inputId => {
+                    const input = document.getElementById(inputId);
+                    const label = document.querySelector(`label[for="${inputId}"]`);
+                    if (id === checkedId) {
+                        input.style.display = 'block';
+                        label.style.display = 'block';
+                        input.required = true;
+                    } else {
+                        input.style.display = 'none';
+                        label.style.display = 'none';
+                        input.required = false;
+                    }
+                });
+            });
+
+            // Asegurarse de que solo un checkbox pueda estar marcado a la vez
+            Object.keys(tipoEmpleadoInputs).forEach(key => {
+                const checkbox = document.getElementById(key);
+                checkbox.checked = (key === checkedId);
+            });
+        }
+
+        // Añadir event listeners
+        Object.keys(tipoEmpleadoInputs).forEach(type => {
+            const checkbox = document.getElementById(type);
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    handleCheckboxChange(type);
+                } else {
+                    handleCheckboxChange(null); // Desmarcar todo si el usuario deselecciona el checkbox
+                }
+            });
+        });
+    });
+</script>
+
+</html>
